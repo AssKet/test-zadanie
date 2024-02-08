@@ -1,0 +1,29 @@
+#Установить необходимые пакеты
+sudo apt update
+sudo apt install ifenslave
+#Создать конфиг
+sudo nano /etc/network/interfaces.d/bond0
+#внутри файла 
+auto bond0
+iface bond0 inet static
+    address 192.168.2.2/22
+    gateway 192.168.2.1
+    dns-nameservers 192.168.2.1
+    bond-mode 4
+    bond-miimon 100
+    bond-lacp-rate 1
+    bond-slaves none
+
+#настроить интерфейсы ens18 и ens19
+sudo nano /etc/network/interfaces.d/ens18 
+auto ens18
+iface ens18 inet manual
+    bond-master bond0
+
+sudo nano /etc/network/interfaces.d/ens19
+auto ens19
+iface ens19 inet manual
+    bond-master bond0
+
+#Перезапустить сетевые сервисы
+sudo systemctl restart networking

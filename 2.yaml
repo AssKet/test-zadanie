@@ -1,0 +1,30 @@
+---
+- name: Change password for user1
+  user:
+    name: user1
+    password: "{{ '1resu' | password_hash('sha512') }}"
+
+- name: Create user2 with specified parameters
+  user:
+    name: user2
+    uid: 5000
+    home: /tmp/user2
+    password: "{{ '2resu' | password_hash('sha512') }}"
+
+- name: Change SSH port to 2022 (simple)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?Port\s+'
+    line: 'Port 2022'
+
+- name: Change SSH port to 2022 (complex)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^(#)?(Port\s+)(22)$'
+    line: '\1\2 2022'
+  notify: restart sshd
+
+- name: restart sshd
+  service:
+    name: sshd
+    state: restarted
